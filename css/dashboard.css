@@ -1,0 +1,268 @@
+/* ==========================================================
+   DASHBOARD.CSS — Dashboard Screen (Apple-Style Optimized)
+   CO2 / Temperature / Humidity Monitor
+   ========================================================== */
+
+/* ── Dashboard Content Area ───────────────────────────────── */
+#screen-dashboard {
+  height: calc(100% - var(--header-height) - var(--nav-height));
+  overflow: hidden;
+}
+
+.dashboard-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: var(--sp-12) 0 var(--sp-8);
+  justify-content: space-between;
+}
+
+/* ── Vehicle Title (Static) ────────────────────────────────── */
+.vehicle-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 4px 10px;
+  border-radius: var(--radius-8);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ── Connection Status ────────────────────────────────────── */
+.connection-status {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--sp-4);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.connection-status .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: background var(--dur-norm);
+  position: relative;
+}
+
+.connection-status.online .dot {
+  background: var(--color-success);
+}
+
+.connection-status.online .dot::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  border: 1px solid var(--color-success);
+  animation: pulseRing 2s infinite ease-out;
+}
+
+.connection-status.offline .dot {
+  background: var(--color-danger);
+}
+
+/* ── Status Overview ──────────────────────────────────────── */
+.status-overview {
+  text-align: center;
+  margin: var(--sp-8) var(--sp-16) var(--sp-4);
+}
+
+/* ── Gauges Container (Full Height Flex) ───────────────────── */
+.gauges-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: space-between;
+  gap: var(--sp-12);
+  margin: var(--sp-4) 0;
+}
+
+/* Stagger entrance for gauge cards */
+.gauges-container .main-gauge {
+  animation: slideUp var(--dur-slow) var(--ease-out) 0.05s both;
+}
+
+.gauges-container .preview-cards-container {
+  animation: slideUp var(--dur-slow) var(--ease-out) 0.15s both;
+}
+
+/* ── Main Active Gauge (Enlarged) ────────────────────────── */
+.gauge-card.main-gauge {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0 var(--sp-16);
+  padding: var(--sp-20) var(--sp-20);
+  background: rgba(20, 20, 23, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-24);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.gauge-card.main-gauge .gauge-header {
+  align-self: flex-start;
+  margin-bottom: var(--sp-12);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+}
+
+.gauge-card.main-gauge .gauge-svg-container {
+  width: 190px;
+  height: 190px;
+  margin: 0 auto;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gauge-card.main-gauge .gauge-sparkline {
+  width: 100%;
+  height: 40px;
+  margin-top: var(--sp-12);
+  opacity: 0.7;
+}
+
+/* ── Preview Cards (Swappable Metrics) ───────────────────── */
+.preview-cards-container {
+  display: flex;
+  gap: var(--sp-16);
+  margin: 0 var(--sp-16);
+}
+
+.preview-card {
+  flex: 1;
+  background: rgba(20, 20, 23, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-16);
+  padding: var(--sp-16) var(--sp-12);
+  height: 72px;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-12);
+  cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast);
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.preview-card:active {
+  transform: scale(0.96);
+}
+
+.preview-card:hover {
+  background: var(--color-card-bg-hover);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.preview-card-icon {
+  font-size: 1.25rem;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.04);
+  flex-shrink: 0;
+}
+
+.preview-card-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.preview-card-label {
+  font-size: 0.65rem;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.preview-card-value {
+  font-family: var(--font-mono);
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+/* Colors matching the metric types */
+.preview-card[data-type="co2"] .preview-card-value {
+  color: var(--color-co2);
+}
+.preview-card[data-type="co2"] .preview-card-icon {
+  background: rgba(46, 204, 113, 0.1);
+  color: var(--color-co2);
+  border: 1px solid rgba(46, 204, 113, 0.15);
+}
+
+.preview-card[data-type="co2"].status-good .preview-card-value {
+  color: var(--color-success);
+}
+.preview-card[data-type="co2"].status-good .preview-card-icon {
+  background: rgba(46, 204, 113, 0.1);
+  color: var(--color-success);
+  border: 1px solid rgba(46, 204, 113, 0.15);
+}
+
+.preview-card[data-type="co2"].status-danger .preview-card-value {
+  color: var(--color-danger);
+}
+.preview-card[data-type="co2"].status-danger .preview-card-icon {
+  background: rgba(231, 76, 60, 0.12);
+  color: var(--color-danger);
+  border: 1px solid rgba(231, 76, 60, 0.2);
+  animation: previewCardDangerPulse 1s infinite ease-in-out;
+}
+
+@keyframes previewCardDangerPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.preview-card[data-type="temp"] .preview-card-value {
+  color: var(--color-temp);
+}
+.preview-card[data-type="temp"] .preview-card-icon {
+  background: rgba(243, 156, 18, 0.1);
+  color: var(--color-temp);
+  border: 1px solid rgba(243, 156, 18, 0.15);
+}
+
+.preview-card[data-type="humidity"] .preview-card-value {
+  color: var(--color-humidity);
+}
+.preview-card[data-type="humidity"] .preview-card-icon {
+  background: rgba(52, 152, 219, 0.1);
+  color: var(--color-humidity);
+  border: 1px solid rgba(52, 152, 219, 0.15);
+}
+
+/* ── Last Update ──────────────────────────────────────────── */
+.last-update {
+  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+  text-align: center;
+  padding: var(--sp-8) var(--sp-16) var(--sp-12);
+  animation: breathe 3s ease-in-out infinite;
+}
+
+.last-update::before {
+  content: '⏱ ';
+  opacity: 0.6;
+}

@@ -1,0 +1,426 @@
+/* ==========================================================
+   SETTINGS.CSS — Settings Screen
+   CO2 / Temperature / Humidity Monitor
+   ========================================================== */
+
+/* ── Screen padding ───────────────────────────────────────── */
+#screen-settings {
+  padding-top: var(--sp-4);
+}
+
+.settings-content {
+  padding-bottom: var(--sp-32);
+}
+
+/* ── Settings Page Title ──────────────────────────────────── */
+.settings-header {
+  padding: var(--sp-16);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* ── Setting Group ────────────────────────────────────────── */
+/* Support both .setting-group and .settings-group (JS uses .settings-group) */
+.setting-group,
+.settings-group {
+  margin: 0 var(--sp-16) var(--sp-16);
+  padding: var(--sp-16);
+  background: var(--color-card-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-16);
+}
+
+.setting-group-title,
+.settings-group-title {
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  margin-bottom: var(--sp-12);
+}
+
+.settings-group-header {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  margin-bottom: var(--sp-12);
+}
+
+.settings-group-icon {
+  font-size: 1rem;
+}
+
+/* ── Setting Row / Setting Item ──────────────────────────── */
+.setting-row,
+.setting-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sp-12) 0;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.setting-row:last-child,
+.setting-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.setting-row:first-of-type,
+.setting-item:first-of-type {
+  padding-top: 0;
+}
+
+.setting-label {
+  font-size: 0.9rem;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  flex-shrink: 0;
+}
+
+.setting-label .setting-icon {
+  font-size: 1.1rem;
+  opacity: 0.7;
+}
+
+.setting-value {
+  color: var(--color-text-secondary);
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+/* ── Setting Control ─────────────────────────────────────── */
+.setting-control {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--sp-4);
+  flex: 1;
+  max-width: 160px;
+}
+
+.setting-slider,
+.setting-control input[type="range"] {
+  width: 100%;
+}
+
+.setting-select {
+  padding: 6px 28px 6px 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-8);
+  color: var(--color-text-primary);
+  font-size: 0.8rem;
+  outline: none;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' fill='rgba(255,255,255,0.5)' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+}
+
+/* ── Toggle Group ────────────────────────────────────────── */
+.toggle-group {
+  display: flex;
+  gap: 2px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-8);
+  padding: 2px;
+}
+
+.toggle-btn {
+  padding: 4px 14px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  transition: all var(--dur-fast) var(--ease-out);
+}
+
+.toggle-btn.active {
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+/* ── Threshold Control / Slider ───────────────────────────── */
+.threshold-control {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-8);
+  width: 100%;
+  padding-top: var(--sp-8);
+}
+
+.threshold-slider {
+  width: 100%;
+}
+
+.threshold-slider input[type="range"] {
+  width: 100%;
+}
+
+/* Color-specific slider thumbs */
+.threshold-slider[data-type="co2"] input[type="range"]::-webkit-slider-thumb {
+  background: var(--color-co2);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.threshold-slider[data-type="temp"] input[type="range"]::-webkit-slider-thumb {
+  background: var(--color-temp);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.threshold-slider[data-type="humidity"] input[type="range"]::-webkit-slider-thumb {
+  background: var(--color-humidity);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.threshold-slider[data-type="co2"] input[type="range"]::-moz-range-thumb {
+  background: var(--color-co2);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.threshold-slider[data-type="temp"] input[type="range"]::-moz-range-thumb {
+  background: var(--color-temp);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.threshold-slider[data-type="humidity"] input[type="range"]::-moz-range-thumb {
+  background: var(--color-humidity);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.threshold-values {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+}
+
+.threshold-values .current-value {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+/* ── Room List ────────────────────────────────────────────── */
+.room-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-8);
+}
+
+.room-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 10px;
+  border: 1px solid transparent;
+  transition: border-color var(--dur-fast),
+              background var(--dur-fast);
+}
+
+.room-item:hover {
+  border-color: var(--color-border);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.room-info {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+}
+
+.room-info .room-icon {
+  font-size: 1rem;
+}
+
+.room-info .room-name {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.room-item .room-actions {
+  display: flex;
+  flex-direction: row;
+  gap: var(--sp-4);
+}
+
+.room-btn {
+  padding: 4px 8px;
+  border-radius: var(--radius-8);
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  transition: color var(--dur-fast),
+              background var(--dur-fast);
+}
+
+.room-btn:hover {
+  color: var(--color-text-primary);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.room-delete {
+  color: rgba(255, 71, 87, 0.6) !important;
+}
+
+.room-delete:hover {
+  color: var(--color-danger) !important;
+  background: rgba(255, 71, 87, 0.1) !important;
+}
+
+.room-delete:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* ── Add Room Button ──────────────────────────────────────── */
+.btn-add-room,
+.add-room-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-8);
+  width: 100%;
+  padding: var(--sp-12);
+  margin-top: var(--sp-8);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed var(--color-border);
+  border-radius: 10px;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: background var(--dur-fast),
+              border-color var(--dur-fast),
+              color var(--dur-fast);
+}
+
+.btn-add-room:hover,
+.add-room-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--color-text-primary);
+}
+
+/* ── Modal extras ────────────────────────────────────────── */
+.modal-field {
+  margin-bottom: var(--sp-8);
+}
+
+.modal-label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--sp-4);
+}
+
+.modal-input {
+  width: 100%;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-12);
+  color: var(--color-text-primary);
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.modal-input:focus {
+  border-color: rgba(255, 107, 107, 0.4);
+}
+
+.modal-message {
+  text-align: center;
+}
+
+.modal-warning-icon {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: var(--sp-8);
+}
+
+.modal-warning-text {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  margin-top: var(--sp-4);
+}
+
+.btn-cancel {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--color-text-secondary);
+}
+
+.btn-cancel:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: var(--sp-4);
+  transition: color var(--dur-fast);
+}
+
+.modal-close:hover {
+  color: var(--color-text-primary);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ── About Info ──────────────────────────────────────────── */
+.about-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+
+.about-row {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--sp-8) 0;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.about-row:last-child {
+  border-bottom: none;
+}
+
+.about-label {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+}
+
+.about-value {
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+/* ── Version / Footer ─────────────────────────────────────── */
+.settings-footer {
+  text-align: center;
+  padding: var(--sp-24) var(--sp-16) var(--sp-32);
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.25);
+  letter-spacing: 0.5px;
+}

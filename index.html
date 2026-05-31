@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AtmoCar - Giám Sát CO₂ Ô Tô</title>
+    <meta name="description" content="Ứng dụng giám sát nồng độ CO₂, nhiệt độ và độ ẩm trong xe ô tô">
+    <meta name="theme-color" content="#0a0a1a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <!-- Adapter for time scale -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+
+    <!-- CSS files -->
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/charts.css">
+    <link rel="stylesheet" href="css/alerts.css">
+    <link rel="stylesheet" href="css/settings.css">
+    <link rel="stylesheet" href="css/reports.css">
+</head>
+<body>
+    <div class="phone-frame">
+        <div class="phone-bg-glow"></div>
+        <div class="phone-bg-blobs">
+            <div class="phone-bg-blob-1"></div>
+            <div class="phone-bg-blob-2"></div>
+        </div>
+        <!-- Toast notification container -->
+        <div class="toast-container" id="toast-container"></div>
+
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1 class="header-title">AtmoCar</h1>
+            </div>
+            <div class="header-center">
+                <span class="vehicle-title" id="vehicle-title">🚗 Xe của tôi</span>
+            </div>
+            <div class="header-right">
+                <div class="connection-status online" id="connection-status">
+                    <span class="dot"></span>
+                    <span class="status-text">Online</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Screen: Dashboard -->
+        <section class="screen active" id="screen-dashboard">
+            <div class="dashboard-content">
+                <div class="status-overview">
+                    <div class="status-badge good" id="status-badge">
+                        <span class="status-icon">✓</span>
+                        <span class="status-text">Chất lượng tốt</span>
+                    </div>
+                </div>
+
+
+
+                <div class="gauges-container">
+                    <!-- Main Active Gauge -->
+                    <div class="gauge-card main-gauge" id="main-gauge-card" data-type="co2">
+                        <div class="gauge-header">
+                            <span class="gauge-icon" id="main-gauge-icon">💨</span>
+                            <span class="gauge-title" id="main-gauge-title">CO₂</span>
+                        </div>
+                        <div class="gauge-body">
+                            <div class="gauge-svg-container" id="main-gauge-svg-container"></div>
+                        </div>
+                        <div class="gauge-desc" id="main-gauge-desc">--</div>
+                        <div class="gauge-sparkline" id="main-gauge-sparkline"></div>
+                    </div>
+
+                    <!-- Two preview cards side-by-side -->
+                    <div class="preview-cards-container">
+                        <div class="preview-card" id="preview-card-left" data-type="temp">
+                            <!-- Populated by JS -->
+                        </div>
+                        <div class="preview-card" id="preview-card-right" data-type="humidity">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="last-update" id="last-update">
+                    Cập nhật lúc: --:--:--
+                </div>
+            </div>
+        </section>
+
+        <!-- Screen: Charts -->
+        <section class="screen" id="screen-charts">
+            <div class="charts-content">
+                <div class="time-tabs">
+                    <button class="time-tab active" data-range="24h">24 giờ</button>
+                    <button class="time-tab" data-range="7d">7 ngày</button>
+                    <button class="time-tab" data-range="30d">30 ngày</button>
+                </div>
+
+                <div class="chart-toggles">
+                    <button class="chart-toggle active" data-metric="co2" style="--toggle-color: #2ecc71">CO₂</button>
+                    <button class="chart-toggle active" data-metric="temp" style="--toggle-color: #f39c12">Nhiệt độ</button>
+                    <button class="chart-toggle active" data-metric="humidity" style="--toggle-color: #3498db">Độ ẩm</button>
+                </div>
+
+                <div class="chart-wrapper">
+                    <canvas id="main-chart"></canvas>
+                </div>
+
+                <div class="stat-cards">
+                    <div class="stat-card" data-metric="co2">
+                        <div class="stat-label">CO₂</div>
+                        <div class="stat-value" id="stat-co2-avg">--</div>
+                        <div class="stat-range" id="stat-co2-range">-- ~ --</div>
+                    </div>
+                    <div class="stat-card" data-metric="temp">
+                        <div class="stat-label">Nhiệt độ</div>
+                        <div class="stat-value" id="stat-temp-avg">--</div>
+                        <div class="stat-range" id="stat-temp-range">-- ~ --</div>
+                    </div>
+                    <div class="stat-card" data-metric="humidity">
+                        <div class="stat-label">Độ ẩm</div>
+                        <div class="stat-value" id="stat-humidity-avg">--</div>
+                        <div class="stat-range" id="stat-humidity-range">-- ~ --</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Screen: Alerts -->
+        <section class="screen" id="screen-alerts">
+            <div class="alerts-content">
+                <div class="alerts-header">
+                    <h2 class="alerts-title">Cảnh báo</h2>
+                    <button class="btn btn-sm" id="clear-all-alerts">Xóa tất cả</button>
+                </div>
+                <div class="alerts-list" id="alerts-list">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Screen: Settings -->
+        <section class="screen" id="screen-settings">
+            <div class="settings-content" id="settings-content">
+                <!-- Populated by JS -->
+            </div>
+        </section>
+
+        <!-- Screen: Reports -->
+        <section class="screen" id="screen-reports">
+            <div class="reports-content" id="reports-content">
+                <!-- Populated by JS -->
+            </div>
+        </section>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <div class="nav-indicator-pill" id="nav-indicator-pill"></div>
+            <button class="nav-item active" data-screen="dashboard">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+                    <rect x="14" y="3" width="7" height="7" rx="1"></rect>
+                    <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+                    <rect x="14" y="14" width="7" height="7" rx="1"></rect>
+                </svg>
+                <span>Tổng quan</span>
+            </button>
+            <button class="nav-item" data-screen="charts">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                </svg>
+                <span>Biểu đồ</span>
+            </button>
+            <button class="nav-item" data-screen="alerts">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+                <span>Cảnh báo</span>
+                <span class="nav-badge" id="alerts-badge" style="display:none">0</span>
+            </button>
+            <button class="nav-item" data-screen="settings">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+                <span>Cài đặt</span>
+            </button>
+            <button class="nav-item" data-screen="reports">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+                <span>Báo cáo</span>
+            </button>
+        </nav>
+
+        <!-- Modal container -->
+        <div class="modal-overlay" id="modal-overlay" style="display:none">
+            <div class="modal" id="modal">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="modal-title"></h3>
+                    <button class="modal-close" id="modal-close">✕</button>
+                </div>
+                <div class="modal-body" id="modal-body"></div>
+                <div class="modal-footer" id="modal-footer"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS files in dependency order -->
+    <script src="js/translations.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/gauges.js"></script>
+    <script src="js/alerts.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/settings.js"></script>
+    <script src="js/reports.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

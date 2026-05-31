@@ -1,0 +1,535 @@
+/* ==========================================================
+   INDEX.CSS — Design System & Layout Foundation
+   CO2 / Temperature / Humidity Monitor
+   ========================================================== */
+
+/* ── Google Fonts ─────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;700&display=swap');
+
+/* ── Custom Properties (Design Tokens) ────────────────────── */
+:root {
+  /* ── Colors ── */
+  --color-bg-start:       #0a0e27;
+  --color-bg-end:         #1a1f3a;
+  --color-co2:            #2ecc71;
+  --color-temp:           #f39c12;
+  --color-humidity:       #3498db;
+  --color-success:        #2ecc71;
+  --color-warning:        #f1c40f;
+  --color-danger:         #e74c3c;
+
+  --color-card-bg:        rgba(255, 255, 255, 0.05);
+  --color-card-bg-hover:  rgba(255, 255, 255, 0.08);
+  --color-text-primary:   #ffffff;
+  --color-text-secondary: rgba(255, 255, 255, 0.6);
+  --color-border:         rgba(255, 255, 255, 0.1);
+  --color-border-subtle:  rgba(255, 255, 255, 0.05);
+
+  /* ── Spacing ── */
+  --sp-4:  4px;
+  --sp-8:  8px;
+  --sp-12: 12px;
+  --sp-16: 16px;
+  --sp-20: 20px;
+  --sp-24: 24px;
+  --sp-32: 32px;
+  --sp-48: 48px;
+
+  /* ── Border-radius ── */
+  --radius-8:    8px;
+  --radius-12:   12px;
+  --radius-16:   16px;
+  --radius-24:   24px;
+  --radius-full: 9999px;
+  --radius-frame: 40px;
+
+  /* ── Shadows ── */
+  --shadow-card:   0 4px 24px rgba(0, 0, 0, 0.25);
+  --shadow-glow:   0 0 20px rgba(255, 255, 255, 0.05);
+  --shadow-frame:  0 0 80px rgba(0, 0, 0, 0.6), 0 0 200px rgba(10, 14, 39, 0.4);
+  --shadow-btn:    0 4px 16px rgba(0, 0, 0, 0.3);
+  --shadow-co2:    0 0 18px rgba(255, 107, 107, 0.35);
+  --shadow-temp:   0 0 18px rgba(255, 165, 2, 0.35);
+  --shadow-hum:    0 0 18px rgba(0, 210, 255, 0.35);
+
+  /* ── Transitions ── */
+  --ease-out:  cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in:   cubic-bezier(0.4, 0, 1, 1);
+  --ease-snap: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-fast:  0.15s;
+  --dur-norm:  0.3s;
+  --dur-slow:  0.5s;
+
+  /* ── Typography ── */
+  --font-body:   'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono:   'Orbitron', monospace;
+
+  /* ── Layout ── */
+  --nav-height:    70px;
+  --header-height: 64px;
+}
+
+/* ── Reset / Normalize ────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--color-text-primary);
+  background: var(--color-bg-start);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+}
+
+img, svg {
+  display: block;
+  max-width: 100%;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+input, textarea, select {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+/* ── Desktop Background ───────────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: #09090b;
+  z-index: -1;
+}
+
+/* ── Phone Frame ──────────────────────────────────────────── */
+.phone-frame {
+  position: relative;
+  width: 375px;
+  height: 812px;
+  margin: 40px auto;
+  border-radius: var(--radius-frame);
+  background: #09090b;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ── Screen System ────────────────────────────────────────── */
+.screen {
+  display: none;
+  height: calc(100% - var(--header-height) - var(--nav-height));
+  overflow-y: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  padding: 0;
+  position: relative;
+  z-index: 2;
+}
+
+.screen::-webkit-scrollbar {
+  display: none;
+}
+
+.screen.active {
+  display: block;
+  animation: fadeIn var(--dur-norm) var(--ease-out) both;
+}
+
+/* ── Header ───────────────────────────────────────────────── */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sp-12) var(--sp-16);
+  background: rgba(10, 14, 39, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.header-left,
+.header-right {
+  flex: 0 0 auto;
+}
+
+.header-center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.header-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, var(--color-co2), var(--color-temp));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Bottom Navigation ────────────────────────────────────── */
+.bottom-nav {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--nav-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background: rgba(10, 14, 39, 0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-top: 1px solid var(--color-border-subtle);
+  z-index: 100;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.nav-item {
+  position: relative;
+  flex: 1;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-4);
+  padding: var(--sp-8) var(--sp-12);
+  border-radius: var(--radius-12);
+  transition: color var(--dur-fast) var(--ease-out),
+              background var(--dur-fast) var(--ease-out);
+  color: var(--color-text-secondary);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.nav-item svg {
+  width: 22px;
+  height: 22px;
+  transition: transform var(--dur-fast) var(--ease-snap);
+}
+
+.nav-item:active svg {
+  transform: scale(0.9);
+}
+
+.nav-item.active {
+  color: #ffffff;
+  position: relative;
+}
+
+/* Nav badge (alert count) */
+.nav-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: var(--radius-full);
+  background: var(--color-danger);
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  box-shadow: 0 0 8px rgba(255, 71, 87, 0.4);
+}
+
+/* ── Keyframe Animations ──────────────────────────────────── */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+@keyframes gaugeFlash {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@keyframes pulseRing {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes breathe {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* ── Scrollbar Hidden Utility ─────────────────────────────── */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Selection ────────────────────────────────────────────── */
+::selection {
+  background: rgba(255, 107, 107, 0.3);
+  color: #fff;
+}
+
+/* ── Nav Indicator Pill ────────────────────────────────────── */
+.nav-indicator-pill {
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  width: 20%;
+  left: 0;
+  border-radius: var(--radius-12);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1), 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: transform 0.35s var(--ease-snap);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* ── Phone Frame Glow Statuses ───────────────────────────── */
+.phone-frame {
+  transition: border-color var(--dur-norm) var(--ease-out);
+}
+
+.phone-frame.status-good {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.phone-frame.status-warning {
+  border-color: rgba(255, 165, 2, 0.2);
+}
+
+.phone-frame.status-danger {
+  border-color: rgba(255, 71, 87, 0.35);
+}
+
+/* ── Phone Screen Background Glow ───────────────────────── */
+.phone-bg-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  transition: background var(--dur-norm) var(--ease-out),
+              opacity var(--dur-norm) var(--ease-out);
+  opacity: 0;
+}
+
+.phone-frame.status-good .phone-bg-glow {
+  opacity: 0.1;
+  background: radial-gradient(circle at center, rgba(0, 230, 118, 0.05) 0%, transparent 75%);
+}
+
+.phone-frame.status-warning .phone-bg-glow {
+  opacity: 0.15;
+  background: radial-gradient(circle at center, rgba(255, 165, 2, 0.07) 0%, transparent 75%);
+}
+
+.phone-frame.status-danger .phone-bg-glow {
+  opacity: 1;
+  background: radial-gradient(circle at center, rgba(255, 71, 87, 0.08) 0%, transparent 70%);
+  animation: bgPulseDanger 2s infinite ease-in-out;
+}
+
+@keyframes bgPulseDanger {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+/* ── CarPlay/Siri-Style Background Blur Blobs ──────────────── */
+.phone-bg-blobs {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.phone-bg-blob-1,
+.phone-bg-blob-2 {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(55px);
+  opacity: 0.12;
+  transition: background 1s var(--ease-out),
+              opacity 1s var(--ease-out);
+  will-change: transform, background, opacity;
+}
+
+.phone-bg-blob-1 {
+  width: 260px;
+  height: 260px;
+  top: -60px;
+  left: -60px;
+  background: var(--color-success);
+  animation: floatBlob1 24s infinite alternate ease-in-out;
+}
+
+.phone-bg-blob-2 {
+  width: 320px;
+  height: 320px;
+  bottom: -90px;
+  right: -90px;
+  background: var(--color-humidity);
+  animation: floatBlob2 30s infinite alternate ease-in-out;
+}
+
+/* Status colors shifting for blobs */
+.phone-frame.status-good .phone-bg-blob-1 {
+  background: var(--color-success);
+  opacity: 0.12;
+}
+.phone-frame.status-good .phone-bg-blob-2 {
+  background: var(--color-humidity);
+  opacity: 0.12;
+}
+
+.phone-frame.status-warning .phone-bg-blob-1 {
+  background: var(--color-warning);
+  opacity: 0.16;
+}
+.phone-frame.status-warning .phone-bg-blob-2 {
+  background: var(--color-warning);
+  opacity: 0.16;
+}
+
+.phone-frame.status-danger .phone-bg-blob-1 {
+  background: var(--color-danger);
+  opacity: 0.22;
+  animation-duration: 8s;
+}
+.phone-frame.status-danger .phone-bg-blob-2 {
+  background: var(--color-danger);
+  opacity: 0.22;
+  animation-duration: 10s;
+}
+
+@keyframes floatBlob1 {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(60px, 80px) scale(1.15);
+  }
+  100% {
+    transform: translate(-30px, 40px) scale(0.9);
+  }
+}
+
+@keyframes floatBlob2 {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(-70px, -50px) scale(0.85);
+  }
+  100% {
+    transform: translate(40px, 30px) scale(1.2);
+  }
+}
