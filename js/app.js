@@ -41,8 +41,9 @@ class App {
         // 8. Start realtime updates
         this.startRealtimeUpdates();
 
-        // 9. Update connection status
-        this.updateConnectionStatus(true);
+        // 9. Update connection status based on Bluetooth
+        const isConnected = localStorage.getItem('co2app_bluetooth_connected') === 'true';
+        this.updateConnectionStatus(isConnected);
 
         console.log('🌿 AtmoCar initialized successfully');
     }
@@ -223,8 +224,8 @@ class App {
             co2: {
                 min: 0,
                 max: 5000,
-                color: data.co2 > thresholds.co2.max ? '#e74c3c' : '#2ecc71',
-                glowColor: data.co2 > thresholds.co2.max ? 'rgba(231, 76, 60, 0.3)' : 'rgba(46, 204, 113, 0.3)',
+                color: data.co2 > thresholds.co2.max ? '#e74c3c' : (data.co2 > 1000 ? '#ffa502' : '#2ecc71'),
+                glowColor: data.co2 > thresholds.co2.max ? 'rgba(231, 76, 60, 0.3)' : (data.co2 > 1000 ? 'rgba(255, 165, 2, 0.3)' : 'rgba(46, 204, 113, 0.3)'),
                 label: window.i18n.t('metric_co2'),
                 unit: 'ppm',
                 type: 'co2',
@@ -275,10 +276,12 @@ class App {
             mainCard.setAttribute('data-type', this.activeMetric);
             if (this.activeMetric === 'co2') {
                 const isDanger = data.co2 > thresholds.co2.max;
+                const isWarning = data.co2 > 1000 && data.co2 <= thresholds.co2.max;
                 mainCard.classList.toggle('status-danger', isDanger);
-                mainCard.classList.toggle('status-good', !isDanger);
+                mainCard.classList.toggle('status-warning', isWarning);
+                mainCard.classList.toggle('status-good', data.co2 <= 1000);
             } else {
-                mainCard.classList.remove('status-danger', 'status-good');
+                mainCard.classList.remove('status-danger', 'status-warning', 'status-good');
             }
         }
         if (mainIcon) mainIcon.textContent = metricConfigs[this.activeMetric].icon;
@@ -300,7 +303,13 @@ class App {
         // Determine health advice description under the main gauge
         let descKey = '';
         if (this.activeMetric === 'co2') {
-            descKey = data.co2 > thresholds.co2.max ? 'desc_co2_danger' : 'desc_co2_good';
+            if (data.co2 > thresholds.co2.max) {
+                descKey = 'desc_co2_danger';
+            } else if (data.co2 > 1000) {
+                descKey = 'desc_co2_warning';
+            } else {
+                descKey = 'desc_co2_good';
+            }
         } else if (this.activeMetric === 'temp') {
             if (data.temp > thresholds.temp.max + 3 || data.temp < thresholds.temp.min - 3) {
                 descKey = 'desc_temp_danger';
@@ -348,10 +357,12 @@ class App {
             card.setAttribute('data-type', type);
             if (type === 'co2') {
                 const isDanger = data.co2 > thresholds.co2.max;
+                const isWarning = data.co2 > 1000 && data.co2 <= thresholds.co2.max;
                 card.classList.toggle('status-danger', isDanger);
-                card.classList.toggle('status-good', !isDanger);
+                card.classList.toggle('status-warning', isWarning);
+                card.classList.toggle('status-good', data.co2 <= 1000);
             } else {
-                card.classList.remove('status-danger', 'status-good');
+                card.classList.remove('status-danger', 'status-warning', 'status-good');
             }
 
             card.innerHTML = `

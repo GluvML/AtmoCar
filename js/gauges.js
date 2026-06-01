@@ -327,6 +327,8 @@ class GaugeRenderer {
         const t = window.DataManager.getThresholds();
         if (value > t.co2.max) {
             return { main: '#e74c3c', glow: 'rgba(231, 76, 60, 0.3)', gradient: ['#e74c3c', '#c0392b'] };
+        } else if (value > 1000) {
+            return { main: '#ffa502', glow: 'rgba(255, 165, 2, 0.3)', gradient: ['#ffa502', '#f1c40f'] };
         } else {
             return { main: '#2ecc71', glow: 'rgba(46, 204, 113, 0.3)', gradient: ['#2ecc71', '#27ae60'] };
         }
@@ -343,6 +345,7 @@ class GaugeRenderer {
 
         if (type === 'co2') {
             if (value > t.co2.max) return 'danger';
+            if (value > 1000) return 'warning';
             return 'good';
         } else if (type === 'temp') {
             if (value > t.temp.max + 3 || value < t.temp.min - 3) return 'danger';

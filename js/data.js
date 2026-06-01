@@ -10,7 +10,7 @@ class DataManager {
         this.currentRoomId = 'my-car';
         this.sensorData = new Map();
         this.thresholds = {
-            co2: { min: 400, max: 1000 },
+            co2: { min: 400, max: 3000 },
             temp: { min: 18, max: 28 },
             humidity: { min: 40, max: 70 }
         };
@@ -229,6 +229,8 @@ class DataManager {
 
         if (reading.co2 > t.co2.max) {
             violations.push({ type: 'co2', value: reading.co2, threshold: t.co2.max, direction: 'above' });
+        } else if (reading.co2 > 1000) {
+            violations.push({ type: 'co2', value: reading.co2, threshold: 1000, direction: 'above' });
         }
         if (reading.temp > t.temp.max) {
             violations.push({ type: 'temp', value: reading.temp, threshold: t.temp.max, direction: 'above' });
@@ -357,6 +359,7 @@ class DataManager {
         if (reading.humidity > t.humidity.max + 10 || reading.humidity < t.humidity.min - 10) return 'danger';
 
         // Check for warning (exceeds thresholds)
+        if (reading.co2 > 1000) return 'warning';
         if (reading.temp > t.temp.max || reading.temp < t.temp.min) return 'warning';
         if (reading.humidity > t.humidity.max || reading.humidity < t.humidity.min) return 'warning';
 

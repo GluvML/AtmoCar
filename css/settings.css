@@ -94,9 +94,8 @@
   display: flex;
   align-items: center;
   gap: var(--sp-8);
-  font-family: var(--font-mono);
-  font-weight: 600;
-  font-size: 0.8rem;
+  font-family: var(--font-body);
+  font-weight: 500;
 }
 
 /* ── Setting Control ─────────────────────────────────────── */
@@ -171,35 +170,21 @@
   width: 100%;
 }
 
-/* Color-specific slider thumbs */
-.threshold-slider[data-type="co2"] input[type="range"]::-webkit-slider-thumb {
-  background: var(--color-co2);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-}
-
-.threshold-slider[data-type="temp"] input[type="range"]::-webkit-slider-thumb {
-  background: var(--color-temp);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-}
-
+/* Minimalist slider thumbs - unified white */
+.threshold-slider[data-type="co2"] input[type="range"]::-webkit-slider-thumb,
+.threshold-slider[data-type="temp"] input[type="range"]::-webkit-slider-thumb,
 .threshold-slider[data-type="humidity"] input[type="range"]::-webkit-slider-thumb {
-  background: var(--color-humidity);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  background: #ffffff !important;
+  border: 2px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3) !important;
 }
 
-.threshold-slider[data-type="co2"] input[type="range"]::-moz-range-thumb {
-  background: var(--color-co2);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-}
-
-.threshold-slider[data-type="temp"] input[type="range"]::-moz-range-thumb {
-  background: var(--color-temp);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-}
-
+.threshold-slider[data-type="co2"] input[type="range"]::-moz-range-thumb,
+.threshold-slider[data-type="temp"] input[type="range"]::-moz-range-thumb,
 .threshold-slider[data-type="humidity"] input[type="range"]::-moz-range-thumb {
-  background: var(--color-humidity);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  background: #ffffff !important;
+  border: 2px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3) !important;
 }
 
 .threshold-values {
@@ -424,3 +409,374 @@
   color: rgba(255, 255, 255, 0.25);
   letter-spacing: 0.5px;
 }
+
+/* ── Bluetooth BLE Scanner styling ───────────────────────── */
+.ble-scanner-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-16);
+  padding: var(--sp-16) 0;
+}
+
+.ble-radar-circle {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: rgba(0, 210, 255, 0.05);
+  border: 1px solid rgba(0, 210, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--sp-8);
+}
+
+.ble-radar-circle::before,
+.ble-radar-circle::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 210, 255, 0.3);
+  animation: ble-radar-pulse 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+  opacity: 0;
+}
+
+.ble-radar-circle::after {
+  animation-delay: 1s;
+}
+
+.ble-radar-icon {
+  font-size: 2rem;
+  color: #00d2ff;
+  text-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+  animation: ble-icon-pulse 2s infinite ease-in-out;
+}
+
+@keyframes ble-radar-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+@keyframes ble-icon-pulse {
+  0%, 100% {
+    transform: scale(0.9);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+    filter: drop-shadow(0 0 10px rgba(0, 210, 255, 0.8));
+  }
+}
+
+.ble-status-text {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+}
+
+.ble-device-list {
+  width: 100%;
+  max-height: 180px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-8);
+  margin-top: var(--sp-8);
+  padding-right: 4px;
+}
+
+/* Scrollbar styling for device list */
+.ble-device-list::-webkit-scrollbar {
+  width: 4px;
+}
+.ble-device-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 2px;
+}
+.ble-device-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+
+.ble-device-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sp-12);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-12);
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-out);
+}
+
+.ble-device-item:hover {
+  background: rgba(0, 210, 255, 0.08);
+  border-color: rgba(0, 210, 255, 0.3);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 210, 255, 0.1);
+}
+
+.ble-device-info {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-12);
+}
+
+.ble-device-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+
+.ble-device-name-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.ble-device-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.ble-device-id {
+  font-size: 0.7rem;
+  color: var(--color-text-secondary);
+  font-family: var(--font-mono);
+}
+
+.ble-device-rssi {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 12px;
+}
+
+.ble-rssi-bar {
+  width: 3px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 1px;
+}
+
+.ble-rssi-bar:nth-child(1) { height: 4px; }
+.ble-rssi-bar:nth-child(2) { height: 7px; }
+.ble-rssi-bar:nth-child(3) { height: 10px; }
+.ble-rssi-bar:nth-child(4) { height: 13px; }
+
+.ble-device-item:hover .ble-rssi-bar {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.ble-device-item:hover .ble-rssi-bar.active {
+  background: #00d2ff;
+}
+
+.ble-rssi-bar.active {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+/* Connection Spinner */
+.ble-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-top-color: #00d2ff;
+  border-radius: 50%;
+  animation: ble-spin 0.8s linear infinite;
+}
+
+@keyframes ble-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Settings Visual Upgrades ────────────────────────────── */
+.setting-item {
+  align-items: flex-start !important; /* Align to top for multi-line description */
+}
+
+.setting-info-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  flex: 1;
+}
+
+.setting-desc-text {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.35);
+  font-weight: 400;
+  padding-left: 40px; /* aligns with label under icon */
+  line-height: 1.3;
+}
+
+/* Setting Icon Wrapper */
+.setting-icon-wrapper {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-8);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border: 1px solid transparent;
+}
+
+/* Color codes for settings icons */
+/* Minimalist Settings Icons - Monochromatic slate */
+.setting-icon-wrapper {
+  background: rgba(255, 255, 255, 0.03) !important;
+  color: rgba(255, 255, 255, 0.6) !important;
+  border-color: rgba(255, 255, 255, 0.06) !important;
+  box-shadow: none !important;
+}
+
+.icon-co2-min, .icon-co2-max, .icon-temp-min, .icon-temp-max, .icon-humidity-min, .icon-humidity-max, .icon-bluetooth, .icon-interval, .icon-unit, .icon-lang, .icon-alerts {
+  background: rgba(255, 255, 255, 0.03) !important;
+  color: rgba(255, 255, 255, 0.6) !important;
+  border-color: rgba(255, 255, 255, 0.06) !important;
+  box-shadow: none !important;
+}
+
+/* ── Bluetooth Connected & Disconnected Hardware Cards ──────────────────── */
+.ble-connected-card,
+.ble-disconnected-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-12);
+  padding: var(--sp-16);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-16);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  margin: var(--sp-8) 0;
+  animation: fadeIn var(--dur-norm) var(--ease-out);
+}
+
+.ble-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ble-device-info-main {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-12);
+}
+
+.ble-device-icon-large {
+  font-size: 1.3rem;
+  background: rgba(255, 255, 255, 0.03);
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.ble-device-text-main {
+  display: flex;
+  flex-direction: column;
+}
+
+.ble-device-name-bold {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.ble-device-status-connected {
+  font-size: 0.65rem;
+  color: var(--color-success);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ble-device-status-disconnected {
+  font-size: 0.65rem;
+  color: var(--color-danger);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ble-battery-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.battery-voltage {
+  font-size: 0.9rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--color-success);
+  text-shadow: 0 0 8px rgba(46, 204, 113, 0.3);
+}
+
+.battery-label {
+  font-size: 0.58rem;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ble-card-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-6);
+  padding: var(--sp-8) 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.ble-detail-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+}
+
+.ble-detail-lbl {
+  color: var(--color-text-secondary);
+}
+
+.ble-detail-val {
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+
+.ble-detail-val.val-green {
+  color: var(--color-success);
+  font-weight: 500;
+}
+
+.ble-card-actions {
+  margin-top: var(--sp-4);
+}
+
+

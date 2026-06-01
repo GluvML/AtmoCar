@@ -83,6 +83,13 @@
   );
 }
 
+.gauge-card[data-type="co2"].status-warning::before {
+  background: linear-gradient(90deg,
+    var(--color-warning),
+    rgba(241, 196, 15, 0.2)
+  );
+}
+
 .gauge-card[data-type="temp"]::before {
   background: linear-gradient(90deg,
     var(--color-temp),
@@ -266,6 +273,10 @@
 
 .toast.danger {
   border-left: 3px solid var(--color-danger);
+}
+
+.toast.success {
+  border-left: 3px solid var(--color-success);
 }
 
 .toast-icon {

@@ -16,6 +16,17 @@ class AlertManager {
     init() {
         this._toastContainer = document.getElementById('toast-container');
         this.updateBadge();
+
+        // Resume AudioContext on first user interaction to satisfy autoplay policy
+        const resumeAudio = () => {
+            if (this._audioCtx && this._audioCtx.state === 'suspended') {
+                this._audioCtx.resume();
+            }
+            document.removeEventListener('click', resumeAudio);
+            document.removeEventListener('touchstart', resumeAudio);
+        };
+        document.addEventListener('click', resumeAudio);
+        document.addEventListener('touchstart', resumeAudio);
     }
 
     // ----------------------------------------------------------
@@ -57,53 +68,92 @@ class AlertManager {
             const message = this._buildAlertMessage(v, roomName);
             this.showToast(message, level);
 
-            // Speak voice alert if enabled
-            this.speakVoiceAlert(v.type, level);
+            // Play alarm sound if enabled
+            this.playAlarmSound(level);
 
             // Update badge
             this.updateBadge();
         });
     }
 
-    speakVoiceAlert(violationType, level) {
-        if (!window.speechSynthesis) return;
-
+    playAlarmSound(level) {
         // Check settings
         const settings = window.DataManager.getSettings();
         if (!settings.voiceAlerts) return;
 
-        // Only speak for danger CO2
-        if (violationType !== 'co2' || level !== 'danger') return;
-
-        // Debounce speaking: 1 minute voice warning debounce
-        const now = Date.now();
-        if (now - this._lastVoiceAlertTime < 60000) return;
-        this._lastVoiceAlertTime = now;
-
         try {
-            const text = window.i18n.t('voice_alert_co2_danger');
-            const utterance = new SpeechSynthesisUtterance(text);
-
-            const langCode = window.i18n.lang === 'vi' ? 'vi-VN' : window.i18n.lang === 'zh' ? 'zh-CN' : 'en-US';
-            utterance.lang = langCode;
-
-            // Find matching voice
-            const voices = window.speechSynthesis.getVoices();
-            const matchedVoice = voices.find(v => v.lang.toLowerCase().replace('_', '-').startsWith(langCode.toLowerCase()));
-            if (matchedVoice) {
-                utterance.voice = matchedVoice;
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContext) return;
+            
+            if (!this._audioCtx) {
+                this._audioCtx = new AudioContext();
+            }
+            
+            if (this._audioCtx.state === 'suspended') {
+                this._audioCtx.resume();
             }
 
-            window.speechSynthesis.speak(utterance);
+            const now = this._audioCtx.currentTime;
+
+            if (level === 'danger') {
+                // Danger alert: Three rapid warning beeps (classic buzzer tone)
+                const times = [0, 0.15, 0.3];
+                times.forEach(t => {
+                    const osc = this._audioCtx.createOscillator();
+                    const gain = this._audioCtx.createGain();
+                    
+                    osc.type = 'square'; // Classic dashboard buzzer square wave
+                    osc.frequency.setValueAtTime(880, now + t); // A5 note (880Hz)
+                    
+                    gain.gain.setValueAtTime(0, now + t);
+                    gain.gain.linearRampToValueAtTime(0.12, now + t + 0.02);
+                    gain.gain.setValueAtTime(0.12, now + t + 0.08);
+                    gain.gain.linearRampToValueAtTime(0, now + t + 0.1);
+                    
+                    osc.connect(gain);
+                    gain.connect(this._audioCtx.destination);
+                    
+                    osc.start(now + t);
+                    osc.stop(now + t + 0.1);
+                });
+            } else {
+                // Warning alert: Double chime (gentle electronic tone)
+                const osc1 = this._audioCtx.createOscillator();
+                const osc2 = this._audioCtx.createOscillator();
+                const gain1 = this._audioCtx.createGain();
+                const gain2 = this._audioCtx.createGain();
+
+                osc1.type = 'sine'; // Soft sine wave
+                osc1.frequency.setValueAtTime(659.25, now); // E5 note (659Hz)
+                gain1.gain.setValueAtTime(0, now);
+                gain1.gain.linearRampToValueAtTime(0.08, now + 0.02);
+                gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+
+                osc2.type = 'sine';
+                osc2.frequency.setValueAtTime(783.99, now + 0.15); // G5 note (784Hz)
+                gain2.gain.setValueAtTime(0, now + 0.15);
+                gain2.gain.linearRampToValueAtTime(0.08, now + 0.17);
+                gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+
+                osc1.connect(gain1);
+                gain1.connect(this._audioCtx.destination);
+                osc2.connect(gain2);
+                gain2.connect(this._audioCtx.destination);
+
+                osc1.start(now);
+                osc1.stop(now + 0.2);
+                osc2.start(now + 0.15);
+                osc2.stop(now + 0.45);
+            }
         } catch (e) {
-            console.error('SpeechSynthesis warning failed:', e);
+            console.error('Failed to play alarm chime:', e);
         }
     }
 
     _getAlertLevel(violation) {
         const t = window.DataManager.getThresholds();
         if (violation.type === 'co2') {
-            return violation.value > t.co2.max * 1.2 ? 'danger' : 'warning';
+            return violation.value >= t.co2.max ? 'danger' : 'warning';
         }
         if (violation.type === 'temp') {
             return (violation.value > t.temp.max + 3 || violation.value < t.temp.min - 3) ? 'danger' : 'warning';
