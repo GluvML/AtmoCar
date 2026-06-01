@@ -174,9 +174,6 @@ class SettingsManager {
                         <span class="setting-value" id="value-humidity-max">${thresholds.humidity.max}%</span>
                     </div>
                 </div>
-            </div>#00a8ff 100%); border: none; padding: var(--sp-8) var(--sp-20); font-size: 0.85rem; border-radius: var(--radius-12);">${window.i18n.t('bluetooth_btn_scan')}</button>
-                     </div>`
-                }
             </div>
 
             <!-- General Settings -->
