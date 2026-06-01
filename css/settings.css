@@ -127,6 +127,18 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' fill='rgba(255,255,255,0.5)' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 8px center;
+  transition: border-color var(--dur-fast), box-shadow var(--dur-fast);
+}
+
+.setting-select:focus {
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.05);
+}
+
+.setting-select option,
+select option {
+  background-color: #1a1e36;
+  color: #ffffff;
 }
 
 /* ── Toggle Group ────────────────────────────────────────── */
